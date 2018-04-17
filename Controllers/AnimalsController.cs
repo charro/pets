@@ -9,9 +9,9 @@ namespace pets.Controllers
     [Route("api/[controller]")]
     public class AnimalsController : Controller
     {
-        private readonly AnimalsContext _context;
+        private readonly PetDBContext _context;
 
-        public AnimalsController(AnimalsContext context)
+        public AnimalsController(PetDBContext context)
         {
             _context = context;
 
@@ -91,15 +91,15 @@ namespace pets.Controllers
                 return BadRequest();
             }
 
-            animal = _context.Animals.FirstOrDefault(t => t.Id == id);
-            if (animal == null)
+            Animal dbanimal = _context.Animals.FirstOrDefault(t => t.Id == id);
+            if (dbanimal == null)
             {
                 return NotFound();
             }
 
-            animal.ModifyValuesFrom(animal);
+            dbanimal.ModifyValuesFrom(animal);
 
-            _context.Animals.Update(animal);
+            _context.Animals.Update(dbanimal);
             _context.SaveChanges();
             return new NoContentResult();
         }

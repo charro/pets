@@ -2,13 +2,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace pets.Models
 {
-    public class AnimalsContext : DbContext
+    public class PetDBContext : DbContext
     {
-        public AnimalsContext(DbContextOptions<AnimalsContext> options)
+        public PetDBContext(DbContextOptions<PetDBContext> options)
             : base(options)
         {
         }
+        public DbSet<User> Users { get; set; }
         public DbSet<Animal> Animals { get; set; }
-
     }
 }

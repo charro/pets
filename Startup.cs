@@ -9,7 +9,7 @@ namespace pets
     {       
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<AnimalsContext>(opt => opt.UseInMemoryDatabase("Animals"));
+            services.AddDbContext<PetDBContext>(opt => opt.UseInMemoryDatabase("Pets"));
             services.AddMvc();
         }
 
