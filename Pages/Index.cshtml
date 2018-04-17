@@ -1,0 +1,36 @@
+﻿@page
+
+<head>
+ <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+          integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+          crossorigin="anonymous">
+ </script>
+  
+  <script>
+    var uri = 'api/animals';
+
+    $(document).ready(function () {
+      updateAnimals();
+      setInterval(updateAnimals, 1000);
+    });
+
+    function updateAnimals(){
+      var htmlContent = "";
+      // Send an AJAX request
+      $.getJSON(uri)
+          .done(function (data) {
+            // On success, 'data' contains a list of todo.
+            $.each(data, function (key, animal) {
+              // Add a list with the animals
+              htmlContent += "<li>" + animal.name + " | " + animal.hunger + " | " + animal.happiness + "</li>"
+            });
+          $('#animals').html(htmlContent);
+          });
+    }
+
+  </script>
+</head>
+
+<h1>The animals:</h1>
+
+<div id="animals"></div>

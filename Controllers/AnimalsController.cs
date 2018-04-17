@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using pets.Models;
 using System.Linq;
+using System;
 
 namespace pets.Controllers
 {
@@ -16,17 +17,26 @@ namespace pets.Controllers
 
             if (_context.Animals.Count() == 0)
             {
-                _context.Animals.Add(new Animal { Name = "New Animal" });
+                _context.Animals.Add(Animal.CreateRandom());
                 _context.SaveChanges();
             }
         }
 
         [HttpGet]
         public IEnumerable<Animal> GetAll()
-        {
+        {   
+            bool modified = false;
+
             IEnumerable<Animal> animalList = _context.Animals.ToList();
             foreach(Animal animal in animalList){
-                animal.UpdateEffectsOfTime();
+                // Update the effects of time before to return it
+                if(animal.UpdateEffectsOfTime()){
+                    _context.Animals.Update(animal);
+                    modified = true;
+                }
+            }
+            if(modified){
+                _context.SaveChanges();
             }
             return animalList;
         }
@@ -40,7 +50,11 @@ namespace pets.Controllers
                 return NotFound();
             }
 
+            // Update the effects of time before to return it
             animal.UpdateEffectsOfTime();
+            _context.Animals.Update(animal);
+            _context.SaveChanges();
+            
             return new ObjectResult(animal);
         }
 
@@ -56,6 +70,17 @@ namespace pets.Controllers
             _context.SaveChanges();
 
             return CreatedAtRoute("GetAnimals", new { id = animal.Id }, animal);
+        }
+
+        [HttpPost("random")]
+        public IActionResult CreateRandom()
+        {
+            Animal randomAnimal = Animal.CreateRandom();
+
+            _context.Animals.Add(randomAnimal);
+            _context.SaveChanges();
+
+            return CreatedAtRoute("GetAnimals", new { id = randomAnimal.Id }, randomAnimal);
         }
 
         [HttpPut("{id}")]
