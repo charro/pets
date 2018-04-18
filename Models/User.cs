@@ -7,7 +7,7 @@ namespace pets.Models
     {
         public long Id { get; set; }
         public string Name { get; set; }
-        public IEnumerable<Animal> Animals { get; set; }
+        public List<Animal> Animals { get; set; }
         public void ModifyValuesFrom(User other){
             this.Name = other.Name;
             this.Animals = other.Animals;

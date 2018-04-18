@@ -1,9 +1,11 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace pets.Models
 {
     public class Animal
     {
+        // Model properties
         public static int MAX_HAPPINESS = 100;
         public static int MIN_HAPPINESS = -100;
         public static int MAX_HUNGER = 100;
@@ -13,8 +15,17 @@ namespace pets.Models
         public int Happiness { get; set; }
         public int Hunger { get; set; }
         public AnimalType Type { get; set; }
+
+        [DataType(DataType.DateTime)]
         public DateTime LastHappinessUpdate { get; set; }
+        [DataType(DataType.DateTime)]
         public DateTime LastHungerUpdate { get; set; }
+        
+        // DB Foreign Key = User this animal belongs to
+        public long UserId { get; set; }
+        public User User { get; set; }
+
+        // Utility methods
         public void Pet(){
             AddHappiness(Config.Config.PET_HAPPINESS_INCREASE_AMOUNT);
         }

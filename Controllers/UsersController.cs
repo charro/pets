@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using pets.Models;
 using System.Linq;
 using System;
@@ -10,36 +11,37 @@ namespace pets.Controllers
     public class UsersController : Controller
     {
         private readonly PetDBContext _context;
-
-        public UsersController(PetDBContext context)
+        private readonly AnimalsController _animalsController;
+        public UsersController(PetDBContext context, AnimalsController animalsController)
         {
             _context = context;
+            _animalsController = animalsController;
 
             if (_context.Users.Count() == 0)
             {
-                _context.Users.Add(new User { Name = "Francis Bacon", Animals = new List<Animal>() });
+                User newUser = new User { Name = "Francis Bacon"};
+                _context.Users.Add(newUser);
                 _context.SaveChanges();
+                // Add one animal to the user
+                AddAnimalToUser(newUser.Id);
             }
         }
 
         [HttpGet]
         public IEnumerable<User> GetAll()
         {   
-            IEnumerable<User> userList = _context.Users.ToList();
+            IEnumerable<User> userList = _context.Users.Include(u => u.Animals).ToList();
             return userList;
         }
 
         [HttpGet("{id}", Name = "GetUsers")]
         public IActionResult GetById(long id)
         {
-            var user = _context.Users.FirstOrDefault(t => t.Id == id);
+            var user = _context.Users.Include(u => u.Animals).FirstOrDefault(t => t.Id == id);
             if (user == null)
             {
                 return NotFound();
             }
-
-            _context.Users.Update(user);
-            _context.SaveChanges();
             
             return new ObjectResult(user);
         }
@@ -91,6 +93,26 @@ namespace pets.Controllers
             _context.Users.Remove(user);
             _context.SaveChanges();
             return new NoContentResult();
+        }
+
+        /****************************************************  Animal related actions **********************************************************/
+
+        // Add a new random animal to a user
+        [HttpPost("{id}/addanimal")]
+        public IActionResult AddAnimalToUser(long id)
+        {
+            var user = _context.Users.FirstOrDefault(t => t.Id == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            Animal newAnimal = Animal.CreateRandom();
+            newAnimal.UserId = user.Id;
+            _context.Animals.Update(newAnimal);
+            _context.SaveChanges();
+
+            return CreatedAtRoute("GetUsers", new { id = user.Id }, user);
         }
     }
 }

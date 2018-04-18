@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using pets.Models;
+using pets.Controllers;
 
 namespace pets
 {
@@ -10,6 +11,7 @@ namespace pets
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PetDBContext>(opt => opt.UseInMemoryDatabase("Pets"));
+            services.AddTransient<AnimalsController, AnimalsController>();
             services.AddMvc();
         }
 
