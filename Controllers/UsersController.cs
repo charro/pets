@@ -19,7 +19,7 @@ namespace pets.Controllers
 
             if (_context.Users.Count() == 0)
             {
-                User newUser = new User { Name = "Francis Bacon"};
+                User newUser = new User { Name = "Noah the Zookeeper"};
                 _context.Users.Add(newUser);
                 _context.SaveChanges();
                 // Add one animal to the user

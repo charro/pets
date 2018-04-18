@@ -19,12 +19,18 @@
       margin: auto;
       width: 10%;
       border-radius: 25px;
-      background: #73AD21;
       padding: 20px;
       margin: 20px;
       height: 200px;
-      color: white;
       display: inline-block;
+    }
+    .user{
+      margin:auto;
+      width: 20%;
+      padding: 20px;
+      border-radius: 40px;
+      background: silver;
+      font-size: 2em; 
     }
 </style>
 
@@ -43,11 +49,11 @@
       $.getJSON(uri)
           .done(function (data) {
             // On success, 'data' contains our user data
-            $('#user').html("Name: " + data.name);
+            $('#user-info').html("Name: " + data.name);
             // Parse all user's animal data
             $.each(data.animals, function (key, animal) {
               // Add a list element for each of the animals
-              htmlContent += "<div class='animal'>" +
+              htmlContent += "<div class='animal' style='background: "+getColorForAnimalType(animal.type)+";'>" +
                     getStateImg(animal.hunger, animal.happiness) + "<br><br>" +
                     "<span style='font-weight: bold; margin:10px;'>" + animal.name + "</span><br>" + 
                     "Hunger: " + animal.hunger + "<br>" + 
@@ -148,14 +154,32 @@
       return "<img src='"+imgSrc+"' height='42' width='42'/>"
     }
 
+    function getColorForAnimalType(type){
+      switch(type){
+        case 1:
+          return "steelblue";
+        case 2:
+          return "sandybrown";
+        case 3:
+          return "tomato";
+        case 4:
+          return "sienna";
+        default:
+          return "silver";
+      }
+    }
+
   </script>
 </head>
 
+<title>THE ZOO KEEPER GAME</title>
 <body>
-  <h1>User Info:</h1>
-  <div id="user" class="user"></div>
-  <button id="addAnimalButton" class="ui-button ui-widget ui-corner-all" onclick="addNewAnimal();">Add Animal</button>
+  <h1>Player</h1>
+  <div id="user" class="user">
+    <div id="user-info" style="padding:10px"></div>
+    <button id="addAnimalButton" class="ui-button ui-widget ui-corner-all" onclick="addNewAnimal();">Add Animal</button>
+  </div>
   <h2>User's animals:</h2>
-  <div id="animals" style="margin:100px"></div>
+  <div id="animals" style="margin-left:100px; margin-right:100px"></div>
   <div id="errors"></div>
 </body>

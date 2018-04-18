@@ -1,4 +1,4 @@
 public enum AnimalType
 {
-	Puppy, Kitty, Horsy
+	Kitty=1, Puppy=2, Donkey=3, Rhino=4 
 }

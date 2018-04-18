@@ -59,18 +59,21 @@ namespace pets.Models
         public bool UpdateEffectsOfTime(){
             bool modified = false;
 
+            // The type acts as a multiplier for the time
+            int secondsToLoseHappiness = (int)this.Type * Config.Config.SECONDS_TO_LOSE_HAPPINESS;
             double secondsPassedSinceLastHappinessUpdate = (DateTime.Now - LastHappinessUpdate).TotalSeconds;
-            if(secondsPassedSinceLastHappinessUpdate >= Config.Config.SECONDS_TO_LOSE_HAPPINESS){
+            if(secondsPassedSinceLastHappinessUpdate >= secondsToLoseHappiness){
                 int happinessLost = 
-                    (int) (secondsPassedSinceLastHappinessUpdate / Config.Config.SECONDS_TO_LOSE_HAPPINESS) * Config.Config.NO_PET_HAPPINESS_DECREASE_AMOUNT;
+                    (int) (secondsPassedSinceLastHappinessUpdate / secondsToLoseHappiness) * Config.Config.NO_PET_HAPPINESS_DECREASE_AMOUNT;
                 AddHappiness(-happinessLost);
                 modified = true;
             }
 
+            int secondsToIncreaseHunger = (int)this.Type * Config.Config.SECONDS_TO_INCREASE_HUNGER;
             double secondsPassedSinceLastHungerUpdate = (DateTime.Now - LastHungerUpdate).TotalSeconds;
-            if(secondsPassedSinceLastHungerUpdate >= Config.Config.SECONDS_TO_INCREASE_HUNGER){
+            if(secondsPassedSinceLastHungerUpdate >= secondsToIncreaseHunger){
                 int hungerIncreased = 
-                    (int) (secondsPassedSinceLastHungerUpdate / Config.Config.SECONDS_TO_INCREASE_HUNGER) * Config.Config.NO_FEED_HUNGER_INCREASE_AMOUNT;
+                    (int) (secondsPassedSinceLastHungerUpdate / secondsToIncreaseHunger) * Config.Config.NO_FEED_HUNGER_INCREASE_AMOUNT;
                 AddHunger(hungerIncreased);
                 modified = true;
             }
