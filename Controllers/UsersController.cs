@@ -31,6 +31,21 @@ namespace pets.Controllers
         public IEnumerable<User> GetAll()
         {   
             IEnumerable<User> userList = _context.Users.Include(u => u.Animals).ToList();
+            
+            bool modified = false;
+            foreach(User user in userList){
+                foreach(Animal animal in user.Animals){
+                    // Update the effects of time before to return the animals of the user
+                    if(animal.UpdateEffectsOfTime()){
+                        _context.Animals.Update(animal);
+                        modified = true;
+                    }
+                }
+            }
+            if(modified){
+                _context.SaveChanges();
+            }
+
             return userList;
         }
 
