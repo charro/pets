@@ -82,7 +82,7 @@ namespace pets.Models
         }
         // Factory of random animals
         public static Animal CreateRandom(){
-            String[] adjectives = {"Pretty", "Cutty", "Happy", "Tiny", "Nicy"};
+            String[] adjectives = {"Pretty", "Cutey", "Happy", "Tiny", "Nicey"};
             Array values = Enum.GetValues(typeof(AnimalType));
             Random random = new Random();
 
