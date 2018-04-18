@@ -23,7 +23,7 @@ namespace pets.Models
         
         // DB Foreign Key = User this animal belongs to
         public long UserId { get; set; }
-        public User User { get; set; }
+       // public User User { get; set; }
 
         // Utility methods
         public void Pet(){

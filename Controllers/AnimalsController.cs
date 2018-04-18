@@ -14,30 +14,12 @@ namespace pets.Controllers
         public AnimalsController(PetDBContext context)
         {
             _context = context;
-
-            if (_context.Animals.Count() == 0)
-            {
-                _context.Animals.Add(Animal.CreateRandom());
-                _context.SaveChanges();
-            }
         }
 
         [HttpGet]
         public IEnumerable<Animal> GetAll()
         {   
-            bool modified = false;
-
             IEnumerable<Animal> animalList = _context.Animals.ToList();
-            foreach(Animal animal in animalList){
-                // Update the effects of time before to return it
-                if(animal.UpdateEffectsOfTime()){
-                    _context.Animals.Update(animal);
-                    modified = true;
-                }
-            }
-            if(modified){
-                _context.SaveChanges();
-            }
             return animalList;
         }
 
@@ -49,11 +31,6 @@ namespace pets.Controllers
             {
                 return NotFound();
             }
-
-            // Update the effects of time before to return it
-            animal.UpdateEffectsOfTime();
-            _context.Animals.Update(animal);
-            _context.SaveChanges();
             
             return new ObjectResult(animal);
         }

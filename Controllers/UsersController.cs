@@ -43,6 +43,18 @@ namespace pets.Controllers
                 return NotFound();
             }
             
+            bool modified = false;
+            foreach(Animal animal in user.Animals){
+                // Update the effects of time before to return the animals of the user
+                if(animal.UpdateEffectsOfTime()){
+                    _context.Animals.Update(animal);
+                    modified = true;
+                }
+            }
+            if(modified){
+                _context.SaveChanges();
+            }
+
             return new ObjectResult(user);
         }
 
@@ -95,7 +107,7 @@ namespace pets.Controllers
             return new NoContentResult();
         }
 
-        /****************************************************  Animal related actions **********************************************************/
+        /****************************************************  User's Animals related actions **********************************************************/
 
         // Add a new random animal to a user
         [HttpPost("{id}/addanimal")]

@@ -5,32 +5,157 @@
           integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
           crossorigin="anonymous">
  </script>
+
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+ <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   
+  <style>
+    body{
+      font-family: 'Roboto', sans-serif;
+      text-align: center;
+    }
+    .animal{
+      margin: auto;
+      width: 10%;
+      border-radius: 25px;
+      background: #73AD21;
+      padding: 20px;
+      margin: 20px;
+      height: 200px;
+      color: white;
+      display: inline-block;
+    }
+</style>
+
   <script>
-    var uri = 'api/animals';
+    // TODO: HARDCODED: We just get the first user. We could get every user with a dropbox
+    var uri = 'api/users/1';
 
     $(document).ready(function () {
-      updateAnimals();
-      setInterval(updateAnimals, 1000);
+      updateUserInfo();
+      setInterval(updateUserInfo, 1000);
     });
 
-    function updateAnimals(){
+    function updateUserInfo(){
       var htmlContent = "";
       // Send an AJAX request
       $.getJSON(uri)
           .done(function (data) {
-            // On success, 'data' contains a list of todo.
-            $.each(data, function (key, animal) {
-              // Add a list with the animals
-              htmlContent += "<li>" + animal.name + " | " + animal.hunger + " | " + animal.happiness + "</li>"
+            // On success, 'data' contains our user data
+            $('#user').html("Name: " + data.name);
+            // Parse all user's animal data
+            $.each(data.animals, function (key, animal) {
+              // Add a list element for each of the animals
+              htmlContent += "<div class='animal'>" +
+                    getStateImg(animal.hunger, animal.happiness) + "<br><br>" +
+                    "<span style='font-weight: bold; margin:10px;'>" + animal.name + "</span><br>" + 
+                    "Hunger: " + animal.hunger + "<br>" + 
+                    "Happiness: " + animal.happiness +
+                    "<div style='margin: 10px;'>" +
+                    getButtonHtml(animal.id, 'delete') + 
+                    getButtonHtml(animal.id, 'feed') +
+                    getButtonHtml(animal.id, 'pet') +
+                    "</div>" +
+                   "</div>"
             });
+          // Add the animals to the container
           $('#animals').html(htmlContent);
-          });
+          })
+          .fail(function(jqxhr, textStatus, error) {
+            $('errors').text(error);
+          })
+    }
+
+    function getButtonHtml(animalId, type){
+      var btnText;
+      var clickAction;
+
+      switch(type) {
+        case 'delete':
+            btnText = 'Delete';
+            clickAction = "'deleteAnimal("+animalId+");'";
+            break;
+        case 'feed':
+            btnText = 'Feed';
+            clickAction = "'feedAnimal("+animalId+");'";
+            break;
+        case 'pet':
+            btnText = 'Pet';
+            clickAction = "'petAnimal("+animalId+");'";
+            break;
+      }
+
+      var html = "<button class='ui-button ui-widget ui-corner-all' onclick="+clickAction+">"+btnText+"</button>";
+      return html;
+    }
+
+    function addNewAnimal(){
+      var jqxhr = $.post( "api/users/1/addanimal")
+        .done(function() {
+          
+        })
+        .fail(function(jqxhr, textStatus, error) {
+          $('errors').text(error);
+        })
+        .always(function() {
+          updateUserInfo();
+        });
+    }
+
+    function deleteAnimal(id){
+      $.ajax({
+        url: "api/animals/"+id,
+        type: 'DELETE',
+        success: function(){ console.log("Animal " + id + " DELETED OK"); updateUserInfo(); }
+      });
+    }
+
+    function feedAnimal(id){
+      var jqxhr = $.post( "api/animals/"+id+"/feed")
+        .done(function() {
+          console.log("Animal " + id + " feeded OK");
+        })
+        .fail(function(jqxhr, textStatus, error) {
+          $('errors').text(error);
+        })
+        .always(function() {
+          updateUserInfo();
+        });
+    }
+
+    function petAnimal(id){
+      var jqxhr = $.post( "api/animals/"+id+"/pet")
+        .done(function() {
+          console.log("Animal " + id + " pet OK");
+        })
+        .fail(function(jqxhr, textStatus, error) {
+          $('errors').text(error);
+        })
+        .always(function() {
+          updateUserInfo();
+        });
+    }
+
+    function getStateImg(hunger, happiness){
+      var imgSrc;
+      if(hunger <= 0 && happiness >= 0){
+        imgSrc = "https://www.shareicon.net/data/128x128/2016/10/25/847532_happy_512x512.png"
+      }
+      else{
+        imgSrc = "https://cdn4.iconfinder.com/data/icons/reaction/32/angry-512.png"
+      }
+      return "<img src='"+imgSrc+"' height='42' width='42'/>"
     }
 
   </script>
 </head>
 
-<h1>The animals:</h1>
-
-<div id="animals"></div>
+<body>
+  <h1>User Info:</h1>
+  <div id="user" class="user"></div>
+  <button id="addAnimalButton" class="ui-button ui-widget ui-corner-all" onclick="addNewAnimal();">Add Animal</button>
+  <h2>User's animals:</h2>
+  <div id="animals" style="margin:100px"></div>
+  <div id="errors"></div>
+</body>
