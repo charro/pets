@@ -15,7 +15,7 @@ INSTRUCTIONS: HOWTO USE IT
 1) Easiest way: Get and run the Docker image from my DockerHub account (https://hub.docker.com/r/charro/pets/):
 
 
-docker pull charro/pets
+sudo docker pull charro/pets
 sudo docker run -d -p 8080:80 --name mypets charro/pets
 
 
