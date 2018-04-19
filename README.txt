@@ -31,7 +31,7 @@ git clone https://github.com/charro/pets.git
 LITTLE EXPLANATIONS ABOUT DESIGN/TECHNICAL DECISIONS/ASSUMPTIONS
 ----------------------------------------------------------------
 
-* For the shake of simplicity:
+* For the sake of simplicity:
 
 - A in-memory database is used
 - Only one user is created and used in the web frontend example (but as many users and animals as needed can be created calling the API)
